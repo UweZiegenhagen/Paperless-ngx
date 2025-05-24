@@ -1,2 +1,3 @@
 # Paperless-ngx
-Tipps und Tricks für paperless-ngx
+
+## Installation im Docker-Container
