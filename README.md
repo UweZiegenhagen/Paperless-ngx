@@ -5,6 +5,8 @@
 * Meine Basis: Debian 12 System
 * Anlage der notwendigen Verzeichnisse als root
 
+### Paperless-ngx
+
 ```
 mkdir /opt/docker/
 cd /opt/docker/
@@ -116,8 +118,36 @@ PAPERLESS_CONSUMER_ASN_BARCODE_PREFIX=ASN
 PAPERLESS_CONSUMER_ENABLE_ASN_BARCODE=true
 PAPERLESS_CONSUMER_ENABLE_BARCODES=true
 PAPERLESS_CONSUMER_BARCODE_SCANNER=ZXING
+# Explizites Einschalten der Web API, eventuell nicht notwendig
 PAPERLESS_ENABLE_API: 1
 ```
+
+### Samba, um auf das consume-Verzeichnis von Windows aus zuzugreifen
+
+
+```
+sudo apt install Samba
+sudo chmod -R 777 /opt/docker/paperless/paperlessconsume
+sudo nano /etc/samba/smb.conf
+sudo systemctl restart smbd
+smbpasswd -a uwe
+```
+
+Am Ende der smb.conf einfügen, dann samba neustarten:
+
+```
+[paperlessconsume]
+   path = /opt/docker/paperless/paperlessconsume
+   browseable = yes
+   writable = yes
+   valid users = uwe
+   create mask = 0660
+   directory mask = 0770
+   public = no
+```
+
+
+
 
 
 
