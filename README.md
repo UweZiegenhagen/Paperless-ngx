@@ -22,7 +22,7 @@ mkdir mariadb
 
 docker-compose.yaml
 
-```
+```docker
 version: "3.8"
 services:
   broker:
@@ -68,7 +68,7 @@ services:
 
 docker-compose.env
 
-```
+```docker
 # The UID and GID of the user used to run paperless in the container. Set this
 # to your UID and GID on the host so that you have write access to the
 # consumption directory.
