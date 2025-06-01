@@ -3,7 +3,7 @@
 ## Installation im Docker-Container
 
 * Meine Basis: Debian 12 System
-* Anlage der notwendigen Verzeichnisse als root
+* Anlage der notwendigen Verzeichnisse als root (via SSH)
 
 ### Paperless-ngx
 
@@ -36,6 +36,7 @@ services:
     restart: unless-stopped
     volumes:
      - /opt/docker/paperless/mariadb:/var/lib/mysql
+     - /opt/docker/paperless/paperlessexport:/backup
     environment:
       MARIADB_HOST: paperless
       MARIADB_DATABASE: paperless
@@ -121,6 +122,9 @@ PAPERLESS_CONSUMER_BARCODE_SCANNER=ZXING
 # Explizites Einschalten der Web API, eventuell nicht notwendig
 PAPERLESS_ENABLE_API: 1
 ```
+
+Ich nutze dann Portainer CE, erstelle einen "paperless" Stack und copy&paste dann die obere Konfiguration in den Stack Editor  bzw. lade die Env Datei.
+
 
 ### Samba, um auf das consume-Verzeichnis von Windows aus zuzugreifen
 
@@ -227,6 +231,39 @@ Ich erstelle mir ASN-Aufkleber (für die Aufkleber nutze ich Avery Zweckform 473
 % in original size, not scaled to fit page
 \end{document}
 ```
+
+## paperless sichern und wiederherstellen
+
+Auf der Synology:
+
+```
+cd /volume1/docker/paperlessngx
+docker exec paperlessngx_webserver_1 document_exporter -f -z ../export
+```
+
+Auf dem Debian 12 System als root
+
+```
+cd /volume1/docker/paperlessngx
+docker exec paperless-webserver-1 document_exporter -f -z ../export
+```
+
+Da sichert nicht die Mariadb Datenbank, diese muss separat gesichert werden.
+
+Login auf die Mariadb via Console auf den DB-Server von Portainer aus.
+
+```bash
+mariadb -upaperless -ppaperless
+```
+
+https://mariadb.com/kb/en/container-backup-and-restoration/
+
+
+```SQL
+mariadb-dump --all-databases -l -uroot -ppaperless > backup/db.sql'
+```
+
+
 
 ## paperless-AI Installation
 
