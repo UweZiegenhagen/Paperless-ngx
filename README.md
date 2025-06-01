@@ -157,13 +157,28 @@ Am Ende der smb.conf einfügen, dann samba neustarten:
 
 ## Grundlagen der Bedienung
 
+### Korrespondenten
+
+### Tags
+
+### Dokumenttypen
+
+### Speicherpfade
+
+### Benutzerdefinierte Felder
+
+### Gespeicherte Ansichten
+
+### Arbeitsabläufe
+
+### E-Mail
 
 
 ## ASNs nutzen und erstellen
 
 Hat man Dokumente, die man in Papierform aufheben muss oder möchte, dann bietet sich die Nutzung einer ASN (Archiv-Seriennummer) an. Mithilfe der ASN kann man alle Dokumente in einem Ordner der Reihe nach ablegen und sie trotzdem schnell wiederfinden. Ich nutze dies für alle Dokumente, die nicht steuerrelevant sind, diese kommen in einen separaten Ordner.
 
-Ich erstelle mir ASN-Aufkleber (für die Aufkleber nutze ich Avery Zweckform 4736)  mit LaTeX, siehe https://www.uweziegenhagen.de/?p=4715.
+Ich erstelle mir ASN-Aufkleber (für die Aufkleber nutze ich Avery Zweckform 4736)  mit LaTeX, siehe https://www.uweziegenhagen.de/?p=4715. Da bei der Installation von paperless die ASN-Konfiguration aktiviert wurde, funktioniert das einfach so. 
 
 
 ```LaTeX
