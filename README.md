@@ -7,7 +7,7 @@
 
 ### Paperless-ngx
 
-```
+```bash
 mkdir /opt/docker/
 cd /opt/docker/
 mkdir paperless
