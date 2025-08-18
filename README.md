@@ -157,6 +157,10 @@ Am Ende der smb.conf einfügen, dann samba neustarten:
 
 ## Grundlagen der Bedienung
 
+* https://www.reddit.com/r/selfhosted/comments/13gmesk/paperless_ngx_whats_your_best_practice_for/
+* https://www.reddit.com/r/selfhosted/comments/15ccv2p/paperlessngx_tips_and_tricks/
+
+
 ### Korrespondenten
 
 ### Tags
