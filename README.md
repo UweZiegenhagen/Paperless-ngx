@@ -9,8 +9,8 @@
 ### Paperless-ngx
 
 ```bash
-mkdir /opt/docker/
-cd /opt/docker/
+mkdir /mnt/datenpool/docker
+cd /mnt/datenpool/docker
 mkdir paperless
 cd paperless
 mkdir paperlessdata
@@ -29,14 +29,14 @@ services:
     image: docker.io/library/redis:7
     restart: unless-stopped
     volumes:
-      - /opt/docker/paperless/redis:/data
+      - /mnt/datenpool/docker/paperless/redis:/data
 
   db:
     image: docker.io/library/mariadb:10
     restart: unless-stopped
     volumes:
-     - /opt/docker/paperless/mariadb:/var/lib/mysql
-     - /opt/docker/paperless/paperlessexport:/backup
+     - /mnt/datenpool/docker/paperless/mariadb:/var/lib/mysql
+     - /mnt/datenpool/docker/paperless/paperlessexport:/backup
     environment:
       MARIADB_HOST: paperless
       MARIADB_DATABASE: paperless

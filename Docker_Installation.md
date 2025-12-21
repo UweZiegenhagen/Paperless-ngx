@@ -52,15 +52,19 @@ docker run -d \
 
 In case Portainer cannot connect to the local Docker:
 
+```bash
 systemctl edit docker.service
-
+```
 
 Insert 
 
+```
 [Service] 
 Environment=DOCKER_MIN_API_VERSION=1.24
-
+```
 
 Restart with 
 
+```bash
 systemctl restart docker
+```
