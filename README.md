@@ -23,6 +23,11 @@ mkdir mariadb
 
 docker-compose.yaml
 
+Hinweis: Will man einen existierenden paperless-Datenbestand mittels document_importer importieren, sollte man zuerst die alte paperless-Version installieren, bei mir war das Version 2.7.2, danach kann man die docker-compose.yaml auf "latest" anpassen, das Upgrade von 2.7.2 auf 2.20.3 hat problemlos geklappt. 
+
+Für den Import darf kein Benutzer angelegt sein, die paperless Instanz muss komplett leer sein!
+
+
 ```docker
 services:
   broker:
@@ -38,8 +43,8 @@ services:
      - /mnt/datenpool/docker/paperless/mariadb:/var/lib/mysql
      - /mnt/datenpool/docker/paperless/paperlessexport:/backup
     environment:
-      MARIADB_HOST: paperless
       MARIADB_DATABASE: paperless
+      MARIADB_HOST: paperless
       MARIADB_USER: paperless
       MARIADB_PASSWORD: paperless
       MARIADB_ROOT_PASSWORD: paperless
@@ -53,10 +58,10 @@ services:
     ports:
       - "8888:8000"
     volumes:
-      - /opt/docker/paperless/paperlessdata:/usr/src/paperless/data
-      - /opt/docker/paperless/paperlessmedia:/usr/src/paperless/media
-      - /opt/docker/paperless/paperlessexport:/usr/src/paperless/export
-      - /opt/docker/paperless/paperlessconsume:/usr/src/paperless/consume
+      - /mnt/datenpool/docker/paperless/paperlessdata:/usr/src/paperless/data
+      - /mnt/datenpool/docker/paperless/paperlessmedia:/usr/src/paperless/media
+      - /mnt/datenpool/docker/paperless/paperlessexport:/usr/src/paperless/export
+      - /mnt/datenpool/docker/paperless/paperlessconsume:/usr/src/paperless/consume
     environment:
       PAPERLESS_REDIS: redis://broker:6379
       PAPERLESS_DBENGINE: mariadb
@@ -123,15 +128,15 @@ PAPERLESS_CONSUMER_BARCODE_SCANNER=ZXING
 PAPERLESS_ENABLE_API: 1
 ```
 
-Ich nutze dann Portainer CE, erstelle einen "paperless" Stack und copy&paste dann die obere Konfiguration in den Stack Editor  bzw. lade die Env Datei.
+Ich nutze dann Portainer CE, erstelle einen "paperless" Stack und copy&paste dann die obere Konfiguration in den Stack Editor. Die Variablen lassen sich ebenfalls per copy & paste setzen, dazu muss man das Knöpfchen für den Advanced Mode betätigen.
 
 
 ### Samba, um auf das consume-Verzeichnis von Windows aus zuzugreifen
 
 
 ```
-sudo apt install Samba
-sudo chmod -R 777 /opt/docker/paperless/paperlessconsume
+sudo apt install samba
+sudo chmod -R 777 /mnt/datenpool/docker/paperless/paperlessconsume
 sudo nano /etc/samba/smb.conf
 sudo systemctl restart smbd
 smbpasswd -a uwe
@@ -141,7 +146,7 @@ Am Ende der smb.conf einfügen, dann samba neustarten:
 
 ```
 [paperlessconsume]
-   path = /opt/docker/paperless/paperlessconsume
+   path = /mnt/datenpool/docker/paperless/paperlessconsume
    browseable = yes
    writable = yes
    valid users = uwe
@@ -281,6 +286,16 @@ https://mariadb.com/kb/en/container-backup-and-restoration/
 ```SQL
 mariadb-dump --all-databases -l -uroot -ppaperless > backup/db.sql'
 ```
+
+## Sichern und wiederherstellen
+
+Wichtig: You cannot import the export generated with one version of paperless in a different version of paperless. The export contains an exact image of the database, and migrations may change the database layout.
+
+Auf meiner Synology: 
+
+In den Container gehen, eine Shell öffnen und folgendes ausführen:
+
+docker exec paperlessngx_webserver_1 document_exporter -f -z ../export
 
 
 
