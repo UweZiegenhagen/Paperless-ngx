@@ -2,8 +2,9 @@
 
 ## Installation im Docker-Container
 
-* Meine Basis: Debian 12 System
+* Meine Basis: Debian 13 System
 * Anlage der notwendigen Verzeichnisse als root (via SSH)
+* Mein zentrales Docker-Verzeichnis liegt in einem ZFS-Datenpool, daher sind die Pfade von /opt/docker dahin angepasst.
 
 ### Paperless-ngx
 
@@ -23,7 +24,6 @@ mkdir mariadb
 docker-compose.yaml
 
 ```docker
-version: "3.8"
 services:
   broker:
     image: docker.io/library/redis:7
