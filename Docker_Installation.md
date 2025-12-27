@@ -1,4 +1,4 @@
-# Docker Installation
+# Docker and Portainer Installation
 
 As described in https://www.thomas-krenn.com/en/wiki/Docker_installation_on_Debian_12
 
