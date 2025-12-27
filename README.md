@@ -325,3 +325,4 @@ Da ich auch manuell auf die Storagebox komme, brauche ich kein Skript für die K
 Dann nutzt man den Dokumentimporter von paperless.
 
 
+https://docs.paperless-ngx.com/administration/#importer
