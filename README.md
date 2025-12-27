@@ -142,6 +142,8 @@ sudo systemctl restart smbd
 smbpasswd -a uwe
 ```
 
+Die letzte Zeile fragt dann nach dem Samba-Passwort, dieses muss meines Erachtens nicht indentisch sein zum normalen Passwort des Nutzers.
+
 Am Ende der smb.conf einfügen, dann samba neustarten:
 
 ```
@@ -153,6 +155,12 @@ Am Ende der smb.conf einfügen, dann samba neustarten:
    create mask = 0660
    directory mask = 0770
    public = no
+```
+
+Von anderen Rechnern kann man dann das Verzeichnis mounten, unter Windows beispielsweise mit 
+
+```
+net use x: \\fractal\paperlessconsume /user:uwe <sambapasswort>
 ```
 
 
@@ -268,40 +276,52 @@ docker exec paperlessngx_webserver_1 document_exporter -f -z ../export
 Auf dem Debian 12 System als root
 
 ```
-cd /volume1/docker/paperlessngx
-docker exec paperless-webserver-1 document_exporter -f -z ../export
+docker exec -t paperless-webserver-1 document_exporter -f ../export
 ```
 
-Da sichert nicht die Mariadb Datenbank, diese muss separat gesichert werden.
+Damit haben wir eine Sicherung aller Dokumente und Metadaten, ein richtiges Backup ist es aber nicht: geht der Server kaputt, sind die Daten auch kaputt.
 
-Login auf die Mariadb via Console auf den DB-Server von Portainer aus.
+Ich habe daher den Sicherungsprozess wie folgt gestaltet:
 
-```bash
-mariadb -upaperless -ppaperless
+### Einfache Version: Hetzner Storagebox mittels CIFS mounten und Dokumente rüberkopieren
+
+Die Zugangsdaten stehen in der cifs.credo, die ich im Root-Verzeichnis abgelegt habe. Sie enthält zwei Zeilen für username und password.
+
+```
+root@Fractal:~# more backup_paperless
+#! /bin/bash
+docker exec -t paperless-webserver-1 document_exporter ../export
+mount -t cifs -o seal,credentials=/root/cifs.credo //uxxxxxx.your-storagebox.de/backup /mnt/storagebox
+cp -rf /mnt/datenpool/docker/paperless/paperlessexport/* /mnt/storagebox/paperless
+umount /mnt/storagebox
 ```
 
-https://mariadb.com/kb/en/container-backup-and-restoration/
+### nur neue Dokumente kopieren
+
+TODO
 
 
-```SQL
-mariadb-dump --all-databases -l -uroot -ppaperless > backup/db.sql'
+## Wiederherstellen in ein neues System
+
+```
+You cannot import the export generated with one version of paperless in a different version of paperless. The export contains an exact image of the database, and migrations may change the database layout.
 ```
 
-## Sichern und wiederherstellen
+Wir müssen also die Version von paperless-ngx irgendwo installieren, die wir auf unserem System bereits hatten.
 
-Wichtig: You cannot import the export generated with one version of paperless in a different version of paperless. The export contains an exact image of the database, and migrations may change the database layout.
+Die Versionsnummer findet sich im Backup-Ordner in der Datei metadata.json
 
-Auf meiner Synology: 
-
-In den Container gehen, eine Shell öffnen und folgendes ausführen:
-
-docker exec paperlessngx_webserver_1 document_exporter -f -z ../export
+Bei der Docker-Installation des Ersatzsystems gibt man dann nicht "latest" an, sondern die exakte Version:
 
 
+image: ghcr.io/paperless-ngx/paperless-ngx:latest
 
-## paperless-AI Installation
+wird zu (beispielsweise)
 
-### Installation mit ChatGPT
+image: ghcr.io/paperless-ngx/paperless-ngx:2.20.3
+
+Da ich auch manuell auf die Storagebox komme, brauche ich kein Skript für die Kopie von der Storagebox auf einen neuen Rechner. Ich kopiere daher alle Dateien wieder in den paperlessexport Ordner.
+
+Dann nutzt man den Dokumentimporter von paperless.
 
 
-### Installation mit LLama
